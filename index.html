@@ -41,24 +41,32 @@ body {
 
 /* ── CURSOR ── */
 .cursor-dot {
-  width: 6px; height: 6px;
-  background: var(--gold);
+  width: 6px;
+  height: 6px;
+  background: #C9A84C;
   border-radius: 50%;
-  position: fixed; pointer-events: none; z-index: 9999;
-  transform: translate(-50%,-50%);
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
   transition: width .2s, height .2s;
+  opacity: 1;
+  display: block;
 }
 .cursor-ring {
-  width: 32px; height: 32px;
-  border: 1px solid rgba(201,168,76,.35);
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(201,168,76,0.5);
   border-radius: 50%;
-  position: fixed; pointer-events: none; z-index: 9998;
-  transform: translate(-50%,-50%);
-  transition: width .35s cubic-bezier(.25,.46,.45,.94), height .35s cubic-bezier(.25,.46,.45,.94);
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width .35s ease, height .35s ease;
+  opacity: 1;
+  display: block;
 }
 * { cursor: none !important; }
-.cursor-dot { opacity: 1; }
-.cursor-ring { opacity: 1; }
 
 /* ── GRAIN OVERLAY ── */
 body::after {
@@ -1349,34 +1357,44 @@ footer {
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// Cursor
-const cd = document.getElementById('cd');
-const cr = document.getElementById('cr');
-let mx = 0, my = 0, rx = 0, ry = 0;
+<script>
+(function() {
+  var dot = document.getElementById('cd');
+  var ring = document.getElementById('cr');
+  if (!dot || !ring) return;
 
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cd.style.left = mx + 'px';
-  cd.style.top = my + 'px';
-});
+  var mx = 0, my = 0, rx = 0, ry = 0;
 
-(function tick() {
-  rx += (mx - rx) * .1;
-  ry += (my - ry) * .1;
-  cr.style.left = rx + 'px';
-  cr.style.top = ry + 'px';
-  requestAnimationFrame(tick);
+  document.addEventListener('mousemove', function(e) {
+    mx = e.clientX;
+    my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top = my + 'px';
+  });
+
+  function tick() {
+    rx += (mx - rx) * 0.1;
+    ry += (my - ry) * 0.1;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(tick);
+  }
+  tick();
+
+  var els = document.querySelectorAll('a, button, .pillar, .pcard, .ocard, .ecocard');
+  els.forEach(function(el) {
+    el.addEventListener('mouseenter', function() {
+      dot.style.width = '12px';
+      dot.style.height = '12px';
+      ring.style.width = '56px';
+      ring.style.height = '56px';
+    });
+    el.addEventListener('mouseleave', function() {
+      dot.style.width = '6px';
+      dot.style.height = '6px';
+      ring.style.width = '32px';
+      ring.style.height = '32px';
+    });
+  });
 })();
-
-document.querySelectorAll('a, button, .pillar, .pcard, .ocard, .eco-card').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    cd.style.width = '12px'; cd.style.height = '12px';
-    cr.style.width = '56px'; cr.style.height = '56px';
-  });
-  el.addEventListener('mouseleave', () => {
-    cd.style.width = '6px'; cd.style.height = '6px';
-    cr.style.width = '32px'; cr.style.height = '32px';
-  });
-});
-
+</script>
